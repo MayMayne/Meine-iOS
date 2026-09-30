@@ -41,6 +41,13 @@ jobs:
       - name: Generate project
         run: python3 scripts/gen_xcodeproj.py
 
+      - name: Install iOS platform
+        run: |
+          set -euo pipefail
+          # macos-latest ships the SDK but not the device platform. Archive needs it.
+          xcodebuild -downloadPlatform iOS || true
+          xcodebuild -showdestinations -project Meine.xcodeproj -scheme Meine || true
+
       - name: Archive unsigned
         run: |
           set -euo pipefail
