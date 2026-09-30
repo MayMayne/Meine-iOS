@@ -44,7 +44,7 @@ struct SourceManifest: Codable, Sendable, Equatable {
     }
 }
 
-enum SDUINode: Codable, Sendable, Equatable {
+indirect enum SDUINode: Codable, Sendable, Equatable {
     case vStack(children: [SDUINode], spacing: Double?)
     case hStack(children: [SDUINode], spacing: Double?)
     case zStack(children: [SDUINode])

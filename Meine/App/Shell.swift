@@ -239,27 +239,37 @@ struct SDUIView: View {
     var source: SourceManifest
 
     var body: some View {
+        SDUIBlock(node: node, source: source)
+    }
+}
+
+private struct SDUIBlock: View {
+    @Environment(AppModel.self) private var app
+    var node: SDUINode
+    var source: SourceManifest
+
+    var body: some View {
         switch node {
         case .vStack(let children, let spacing):
             VStack(alignment: .leading, spacing: spacing ?? 12) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    SDUIView(node: child, source: source)
+                    SDUIBlock(node: child, source: source)
                 }
             }
         case .hStack(let children, let spacing):
             HStack(spacing: spacing ?? 12) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    SDUIView(node: child, source: source)
+                    SDUIBlock(node: child, source: source)
                 }
             }
         case .zStack(let children):
             ZStack {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    SDUIView(node: child, source: source)
+                    SDUIBlock(node: child, source: source)
                 }
             }
         case .scroll(let child):
-            ScrollView(.horizontal, showsIndicators: false) { SDUIView(node: child, source: source) }
+            ScrollView(.horizontal, showsIndicators: false) { SDUIBlock(node: child, source: source) }
         case .text(let value):
             Text(value).font(.title2.weight(.semibold)).foregroundStyle(app.theme.inkColor)
         case .symbol(let name):
@@ -274,7 +284,7 @@ struct SDUIView: View {
                     ForEach(itemIDs, id: \.self) { id in
                         if let item = source.catalog.first(where: { $0.id == id }) {
                             NavigationLink(value: Route.item(source.id.rawValue, item.id)) {
-                                heroCard(item)
+                                SDUIHero(item: item)
                             }.buttonStyle(.plain)
                         }
                     }
@@ -284,7 +294,7 @@ struct SDUIView: View {
             let count = max(1, columns)
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: count), spacing: 12) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    SDUIView(node: child, source: source)
+                    SDUIBlock(node: child, source: source)
                 }
             }
         case .spacer:
@@ -293,8 +303,12 @@ struct SDUIView: View {
             EmptyView()
         }
     }
+}
 
-    private func heroCard(_ item: CatalogItem) -> some View {
+private struct SDUIHero: View {
+    @Environment(AppModel.self) private var app
+    var item: CatalogItem
+    var body: some View {
         ZStack(alignment: .bottomLeading) {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .fill(LinearGradient(colors: [app.theme.primaryColor, app.theme.activeColor.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
