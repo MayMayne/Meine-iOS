@@ -1,0 +1,55 @@
+workflows:
+  meine-ios-unsigned:
+    name: Meine unsigned IPA
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: Meine.xcodeproj
+        XCODE_SCHEME: Meine
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Generate Xcode project
+        script: python3 scripts/gen_xcodeproj.py
+      - name: Archive unsigned
+        script: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -archivePath "$CM_BUILD_DIR/Meine.xcarchive" \
+            -destination "generic/platform=iOS" \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY= \
+            DEVELOPMENT_TEAM= \
+            CODE_SIGN_ENTITLEMENTS= \
+            ENABLE_PREVIEWS=NO \
+            ENABLE_ON_DEMAND_RESOURCES=NO \
+            ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS=NO \
+            ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            IPHONEOS_DEPLOYMENT_TARGET=18.0
+      - name: Package IPA
+        script: |
+          set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/export/Payload"
+          cp -R "$CM_BUILD_DIR/Meine.xcarchive/Products/Applications/"*.app "$CM_BUILD_DIR/export/Payload/"
+          cd "$CM_BUILD_DIR/export"
+          zip -qry Meine-unsigned.ipa Payload
+          mkdir -p "$CM_BUILD_DIR/artifacts"
+          mv Meine-unsigned.ipa "$CM_BUILD_DIR/artifacts/"
+    artifacts:
+      - artifacts/*.ipa
+    publishing:
+      email:
+        recipients: []
