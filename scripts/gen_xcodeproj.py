@@ -43,6 +43,7 @@ pbx = f"""// !$*UTF8*$!
 		{EXCEPTIONS} /* Exceptions for "Meine" folder in "Synchronize Root Group" */ = {{
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Info.plist,
 				PrivacyInfo.xcprivacy,
 			);
 			target = {TARGET} /* Meine */;
@@ -291,7 +292,8 @@ pbx = f"""// !$*UTF8*$!
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Meine/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Meine;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Meine dùng camera để đọc mã QR nguồn do bạn đưa.";
@@ -333,7 +335,8 @@ pbx = f"""// !$*UTF8*$!
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Meine/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Meine;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Meine dùng camera để đọc mã QR nguồn do bạn đưa.";
