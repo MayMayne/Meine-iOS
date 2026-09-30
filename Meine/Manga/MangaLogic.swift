@@ -170,7 +170,7 @@ enum MangaAutoCrop {
 }
 
 enum MangaPageSynth {
-    static func placeholderCount: Int { 8 }
+    static var placeholderCount: Int { 8 }
 
     static func ink(for index: Int) -> (red: Double, green: Double, blue: Double) {
         let palette: [(Double, Double, Double)] = [
